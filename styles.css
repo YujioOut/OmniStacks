@@ -1,0 +1,53 @@
+:root {
+  --primary-color: #4caf50; /* Main color */
+  --secondary-color: #2e7d32; /* Darker green */
+  --text-color: #fff;
+  --background-color: #121212; /* Dark background */
+  --border-radius: 12px;
+  --gap-size: 10px;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  margin: 0;
+  padding: 20px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-size);
+}
+
+/* Each stack is a row */
+.stack {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(150px, 1fr)
+  ); /* Dynamic columns */
+  gap: var(--gap-size);
+  padding: 15px;
+  background: var(--secondary-color);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Each skill is a grid item */
+.skill {
+  background: var(--primary-color);
+  padding: 12px;
+  text-align: center;
+  font-weight: bold;
+  border-radius: var(--border-radius);
+  transition: 0.3s ease;
+  cursor: pointer;
+}
+
+/* Hover effect */
+.skill:hover {
+  background: #66bb6a;
+  transform: scale(1.05);
+}
