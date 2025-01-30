@@ -20,46 +20,84 @@
     </div>
 
     <script>
+      // Load saved data from localStorage
+      window.onload = function () {
+        const savedData = localStorage.getItem("omniStacksData");
+        if (savedData) {
+          const stacksData = JSON.parse(savedData);
+          stacksData.forEach((stack) => {
+            addStack(stack.stackName, stack.skills);
+          });
+        }
+      };
+
+      // Function to add a new stack
+      function addStack(stackName = "", skills = []) {
+        let stackDiv = document.createElement("div");
+        stackDiv.className = "stack";
+
+        let stackTitle = document.createElement("input");
+        stackTitle.className = "stack-title";
+        stackTitle.placeholder = "Enter Stack Name";
+        stackTitle.value = stackName;
+
+        let skillsContainer = document.createElement("div");
+        skillsContainer.className = "skills-container";
+
+        skills.forEach((skill) => {
+          let skillDiv = document.createElement("div");
+          skillDiv.className = "skill";
+
+          let skillInput = document.createElement("input");
+          skillInput.className = "skill-input";
+          skillInput.placeholder = "Enter Skill";
+          skillInput.value = skill.skill;
+
+          let activityInput = document.createElement("input");
+          activityInput.className = "activity-input";
+          activityInput.placeholder = "Enter Activity";
+          activityInput.value = skill.activity;
+
+          skillDiv.appendChild(skillInput);
+          skillDiv.appendChild(activityInput);
+          skillsContainer.appendChild(skillDiv);
+        });
+
+        let addSkillBtn = document.createElement("button");
+        addSkillBtn.innerText = "+ Add Skill";
+        addSkillBtn.className = "add-skill-btn";
+
+        addSkillBtn.addEventListener("click", function () {
+          let skillDiv = document.createElement("div");
+          skillDiv.className = "skill";
+
+          let skillInput = document.createElement("input");
+          skillInput.className = "skill-input";
+          skillInput.placeholder = "Enter Skill";
+
+          let activityInput = document.createElement("input");
+          activityInput.className = "activity-input";
+          activityInput.placeholder = "Enter Activity";
+
+          skillDiv.appendChild(skillInput);
+          skillDiv.appendChild(activityInput);
+          skillsContainer.appendChild(skillDiv);
+        });
+
+        stackDiv.appendChild(stackTitle);
+        stackDiv.appendChild(skillsContainer);
+        stackDiv.appendChild(addSkillBtn);
+        document.getElementById("stacksContainer").appendChild(stackDiv);
+      }
+
+      // Add new stack on button click
       document
         .getElementById("addStackBtn")
         .addEventListener("click", function () {
-          let stackDiv = document.createElement("div");
-          stackDiv.className = "stack";
-
-          let stackTitle = document.createElement("input");
-          stackTitle.className = "stack-title";
-          stackTitle.placeholder = "Enter Stack Name";
-
-          let skillsContainer = document.createElement("div");
-          skillsContainer.className = "skills-container";
-
-          let addSkillBtn = document.createElement("button");
-          addSkillBtn.innerText = "+ Add Skill";
-          addSkillBtn.className = "add-skill-btn";
-
-          addSkillBtn.addEventListener("click", function () {
-            let skillDiv = document.createElement("div");
-            skillDiv.className = "skill";
-
-            let skillInput = document.createElement("input");
-            skillInput.className = "skill-input";
-            skillInput.placeholder = "Enter Skill";
-
-            let activityInput = document.createElement("input");
-            activityInput.className = "activity-input";
-            activityInput.placeholder = "Enter Activity";
-
-            skillDiv.appendChild(skillInput);
-            skillDiv.appendChild(activityInput);
-            skillsContainer.appendChild(skillDiv);
-          });
-
-          stackDiv.appendChild(stackTitle);
-          stackDiv.appendChild(skillsContainer);
-          stackDiv.appendChild(addSkillBtn);
-          document.getElementById("stacksContainer").appendChild(stackDiv);
+          addStack();
         });
 
+      // Save data to localStorage
       document.getElementById("saveBtn").addEventListener("click", function () {
         let stacks = document.querySelectorAll(".stack");
         let data = [];
@@ -77,6 +115,8 @@
           data.push({ stackName, skills });
         });
 
+        // Save the data to localStorage
+        localStorage.setItem("omniStacksData", JSON.stringify(data));
         console.log("Saved Data:", JSON.stringify(data, null, 2));
       });
     </script>
