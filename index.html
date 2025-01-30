@@ -17,6 +17,7 @@
       </div>
 
       <button id="saveBtn">💾 Save Plan</button>
+      <button id="exportBtn">📤 Export Plan</button>
     </div>
 
     <script>
@@ -58,8 +59,26 @@
           activityInput.placeholder = "Enter Activity";
           activityInput.value = skill.activity;
 
+          // Create a counter to track the activity completion
+          let counterSpan = document.createElement("span");
+          counterSpan.className = "counter";
+          counterSpan.innerText = `Completed: ${skill.completedCount || 0}`;
+
+          // Button to mark activity as completed
+          let markCompletedBtn = document.createElement("button");
+          markCompletedBtn.innerText = "Mark as Completed";
+          markCompletedBtn.className = "mark-completed-btn";
+
+          // Handle click event to increment the completion counter
+          markCompletedBtn.addEventListener("click", function () {
+            let currentCount = parseInt(counterSpan.innerText.split(": ")[1]);
+            counterSpan.innerText = `Completed: ${currentCount + 1}`;
+          });
+
           skillDiv.appendChild(skillInput);
           skillDiv.appendChild(activityInput);
+          skillDiv.appendChild(counterSpan);
+          skillDiv.appendChild(markCompletedBtn);
           skillsContainer.appendChild(skillDiv);
         });
 
@@ -79,8 +98,26 @@
           activityInput.className = "activity-input";
           activityInput.placeholder = "Enter Activity";
 
+          // Create a counter to track the activity completion
+          let counterSpan = document.createElement("span");
+          counterSpan.className = "counter";
+          counterSpan.innerText = `Completed: 0`;
+
+          // Button to mark activity as completed
+          let markCompletedBtn = document.createElement("button");
+          markCompletedBtn.innerText = "Mark as Completed";
+          markCompletedBtn.className = "mark-completed-btn";
+
+          // Handle click event to increment the completion counter
+          markCompletedBtn.addEventListener("click", function () {
+            let currentCount = parseInt(counterSpan.innerText.split(": ")[1]);
+            counterSpan.innerText = `Completed: ${currentCount + 1}`;
+          });
+
           skillDiv.appendChild(skillInput);
           skillDiv.appendChild(activityInput);
+          skillDiv.appendChild(counterSpan);
+          skillDiv.appendChild(markCompletedBtn);
           skillsContainer.appendChild(skillDiv);
         });
 
@@ -109,7 +146,10 @@
           stack.querySelectorAll(".skill").forEach((skillDiv) => {
             let skill = skillDiv.querySelector(".skill-input").value;
             let activity = skillDiv.querySelector(".activity-input").value;
-            skills.push({ skill, activity });
+            let completedCount = skillDiv
+              .querySelector(".counter")
+              .innerText.split(": ")[1];
+            skills.push({ skill, activity, completedCount });
           });
 
           data.push({ stackName, skills });
@@ -119,6 +159,69 @@
         localStorage.setItem("omniStacksData", JSON.stringify(data));
         console.log("Saved Data:", JSON.stringify(data, null, 2));
       });
+
+      // Export data as text with description for AI
+      document
+        .getElementById("exportBtn")
+        .addEventListener("click", function () {
+          let stacks = document.querySelectorAll(".stack");
+          let exportText = "";
+
+          stacks.forEach((stack) => {
+            let stackName = stack.querySelector(".stack-title").value;
+            exportText += `Stack: ${stackName}\n`;
+
+            stack.querySelectorAll(".skill").forEach((skillDiv) => {
+              let skill = skillDiv.querySelector(".skill-input").value;
+              let activity = skillDiv.querySelector(".activity-input").value;
+              let completedCount = skillDiv
+                .querySelector(".counter")
+                .innerText.split(": ")[1];
+              exportText += `  - Skill: ${skill} | Activity: ${activity} | Completed: ${completedCount}\n`;
+            });
+
+            exportText += "\n";
+          });
+
+          // Create the brief description for AI
+          const description = `
+          Dear AI,
+
+          This user is progressing through their self-improvement routine. Below is the data on their activities:
+          - The "stack" represents a group of tasks or skills.
+          - Each "skill" contains tasks with the corresponding count of completions.
+
+          Their current progress is tracked by the number of times they've completed activities. Please consider the following factors when calculating their tetrational or hexational productivity:
+          1. **Tetrational Productivity**: This refers to the user's exponential growth based on their consistent activities and cumulative effort. Each task completed represents a step in that growth. The higher the number of completions, the more significant the result.
+          2. **Hexational Productivity**: This is about achieving results that lead to an accelerating cycle. It refers to optimizing and streamlining tasks that not only lead to immediate results but set the user on a trajectory of compound improvement.
+
+          **Honoring Their Achievement**: For each task completed, give recognition, with a particular focus on streaks and significant milestones.
+
+          **Advice for Improvement**:
+          - Consider suggesting ways to increase the number of repetitions or improve efficiency in each skill.
+          - Encourage them to set higher goals based on their successes.
+          - Offer motivational advice like: "Great progress! Keep up the momentum, and aim for 10 more completions in the next session to accelerate your growth."
+
+          **Suggestions for the User**:
+          - If possible, suggest routine modifications to target new skills or combine activities for a synergistic result.
+          - Always ask for clarification when needed to understand how they prefer to be assisted in their personal journey.
+
+          Best of luck with optimizing their growth and results!
+
+          User's progress data:
+          ${exportText}
+          `;
+
+          // Copy the text to clipboard
+          navigator.clipboard.writeText(description).then(
+            function () {
+              alert("Plan and AI-guided description exported to clipboard!");
+            },
+            function (err) {
+              console.error("Failed to copy text: ", err);
+            }
+          );
+        });
     </script>
   </body>
 </html>
